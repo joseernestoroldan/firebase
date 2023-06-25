@@ -6,6 +6,8 @@ import {
   onAuthStateChanged,
   FacebookAuthProvider,
   GithubAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -14,7 +16,7 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState({});
 
-  const signIn = async (provider) => {
+  const useSignIn = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
@@ -24,25 +26,48 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  const LoginWithEmailAndPass = async (email, password) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      console.log('Logged in user:', user);
+    } catch (error) {
+      console.error('Authentication error:', error);
+    }
+
+  }
+
   const GoogleSignIn = () => {
     const provider = new GoogleAuthProvider();
-    signIn(provider);
+    useSignIn(provider);
   };
 
   const FacebookSignIn = async () => {
     const provider = new FacebookAuthProvider();
-    signIn(provider);
+    useSignIn(provider);
   };
 
   const GitHubSignIn = async () => {
     const provider = new GithubAuthProvider();
-    signIn(provider);
+    useSignIn(provider);
   };
 
-  const GoogleLogOut = async () => {
+  const LogOut = async () => {
     signOut(auth);
   };
 
+  const Registration = async (email, password) => {
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      // Registration successful, you can redirect or perform other actions
+      console.log('Registered user:', user);
+    } catch (error) {
+      // Handle registration error
+      console.error('Registration error:', error);
+    }
+  };
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -51,11 +76,8 @@ export const AuthContextProvider = ({ children }) => {
       unsubscribe();
     };
   }, []);
-
   return (
-    <AuthContext.Provider
-      value={{ GoogleSignIn, GoogleLogOut, FacebookSignIn, GitHubSignIn, user }}
-    >
+    <AuthContext.Provider value={{ GoogleSignIn, LogOut, FacebookSignIn, GitHubSignIn, user, Registration, LoginWithEmailAndPass }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
-import {
-  Avatar,
-  Button,
-  CssBaseline,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Grid,
-  Box,
-  Typography,
-  Container,
-  Divider,
-} from "@mui/material";
+
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Divider from "@mui/material/Divider";
 import GoogleButton from "react-google-button";
 import {
   FacebookLoginButton,
@@ -24,7 +23,24 @@ import "../App.css";
 import { UseAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Copyright from "../components/Copyright/Copyright";
+
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Firebase Authentification
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
 
 const defaultTheme = createTheme();
 
@@ -32,39 +48,46 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const {
-    LoginWithEmailAndPass,
-    GoogleSignIn,
-    FacebookSignIn,
-    GitHubSignIn,
-    user,
-  } = UseAuth();
-
+  const { GoogleSignIn, FacebookSignIn, GitHubSignIn, user } = UseAuth();
   const navigate = useNavigate();
 
   const handleGoogleSignIn = () => {
     GoogleSignIn();
   };
+
   const handleFacebookSignIn = () => {
     FacebookSignIn();
   };
+
   const handleGitHubSignIn = () => {
     GitHubSignIn();
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    LoginWithEmailAndPass(email, password);
-    setEmail("");
-    setPassword("");
-  };
-  
+
   useEffect(() => {
     if (user != null) {
       navigate("/account");
     }
   }, [user, navigate]);
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
 
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Perform sign-in logic here, such as sending the email and password to an authentication service
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    // Reset form fields
+    setEmail("");
+    setPassword("");
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -101,9 +124,7 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={handleEmailChange}
             />
             <TextField
               margin="normal"
@@ -115,9 +136,7 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={handlePasswordChange}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -138,12 +157,14 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link to="/register">{"Don't have an account? Sign Up"}</Link>
+                <Link to="/register">
+                  {"Don't have an account? Sign Up"}
+                </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Divider variant="middle">Or</Divider>
+        <Divider variant="middle" />
         <Box>
           <div className="container">
             <div>

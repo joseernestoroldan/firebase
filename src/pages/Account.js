@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 const Account = () => {
 
-  const{GoogleLogOut, user} = UseAuth()
+  const{LogOut, user} = UseAuth()
   const navigate = useNavigate()
 
   const handleLogOut = () =>{
-    GoogleLogOut()
+    LogOut()
     navigate('/')
   }
   
